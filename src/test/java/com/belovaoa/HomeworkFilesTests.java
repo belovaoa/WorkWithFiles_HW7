@@ -1,6 +1,8 @@
 package com.belovaoa;
 
+import com.codeborne.pdftest.PDF;
 import com.codeborne.selenide.Configuration;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -38,5 +40,15 @@ public class HomeworkFilesTests {
         System.out.println(actualData);
         assertThat(actualData,
                 containsString(expextedData));
+    }
+
+    @Test
+    @DisplayName("Скачивание пдф и проверка его содержимого")
+    void downloadPdfFileTest() throws IOException {
+        open("http://school135.ru/priem-v-10-j-klass");
+        File pdf = $("a[href*='/files/priem-10-klass/priem-10klass-2021.pdf']").download();
+        PDF parsedPdf = new PDF(pdf);
+        System.out.println();
+        Assertions.assertEquals(3, parsedPdf.numberOfPages);
     }
 }
