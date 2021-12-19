@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 
 import static com.codeborne.selenide.Selectors.byText;
@@ -35,7 +37,6 @@ public class HomeworkFilesTests {
         File downloadedFile = $(byText("Заявление о приеме в 10-й класс в 2020 году (форма)")).download();
         String fileContent = readFileContent(downloadedFile);
         System.out.println();
-       // assertThat(fileContent, Matchers.containsString(""));
     }
 
     @Test
@@ -83,6 +84,20 @@ public class HomeworkFilesTests {
              CSVReader csvReader = new CSVReader(reader);
              List<String[]> strings = csvReader.readAll();
             assertEquals(strings.size(), 3);
+        }
+    }
+
+    @Test
+    @DisplayName("Парсим zip")
+    void parseZipFileTest() throws IOException, CsvException {
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        try (InputStream is = classLoader.getResourceAsStream("zip.zip");
+            ZipInputStream zis = new ZipInputStream(is)) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                System.out.println(entry.getName());
+            assertEquals("testWordDocInsert.doc", entry.getName());
+            }
         }
     }
 }
