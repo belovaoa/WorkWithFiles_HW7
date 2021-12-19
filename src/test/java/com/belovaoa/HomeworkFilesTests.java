@@ -3,13 +3,15 @@ package com.belovaoa;
 import com.codeborne.pdftest.PDF;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.xlstest.XLS;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.util.List;
 
 
 import static com.codeborne.selenide.Selectors.byText;
@@ -19,6 +21,7 @@ import static helpers.FileContentReaderClass.FileContentReader1.readDocxFile;
 import static helpers.FileContentReaderClass.FileContentReader1.readFileContent;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -69,5 +72,17 @@ public class HomeworkFilesTests {
                 .getStringCellValue()
                 .contains("www.сkmt.ru, msk@ckmt.ru");
         assertTrue(checkPassed);
+    }
+
+    @Test
+    @DisplayName("Парсим csv")
+    void parseCsvFileTest() throws IOException, CsvException {
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        try (InputStream is = classLoader.getResourceAsStream("csv.csv");
+             Reader reader = new InputStreamReader(is)) {
+             CSVReader csvReader = new CSVReader(reader);
+             List<String[]> strings = csvReader.readAll();
+            assertEquals(strings.size(), 3);
+        }
     }
 }
